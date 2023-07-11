@@ -17,8 +17,11 @@ class ProductDetailPage extends StatefulWidget {
   final ProductModel product;
   final OrderProductDto? order;
 
-  const ProductDetailPage({Key? key, required this.product, this.order})
-      : super(key: key);
+  const ProductDetailPage({
+    super.key,
+    required this.product,
+    this.order,
+  });
 
   @override
   State<ProductDetailPage> createState() => _ProductDetailPageState();
@@ -29,7 +32,6 @@ class _ProductDetailPageState
   @override
   void initState() {
     super.initState();
-
     final amount = widget.order?.amount ?? 1;
     controller.initial(amount, widget.order != null);
   }
@@ -48,15 +50,12 @@ class _ProductDetailPageState
               },
               child: Text(
                 'Cancelar',
-                style: context.textStyles.textBold.copyWith(
-                  color: Colors.red,
-                ),
+                style: context.textStyles.textBold.copyWith(color: Colors.red),
               ),
             ),
             TextButton(
               onPressed: () {
                 Navigator.pop(context);
-
                 Navigator.of(context).pop(
                   OrderProductDto(
                     product: widget.product,
@@ -64,7 +63,10 @@ class _ProductDetailPageState
                   ),
                 );
               },
-              child: Text('Confirmar ', style: context.textStyles.textBold),
+              child: Text(
+                'Confirmar',
+                style: context.textStyles.textBold,
+              ),
             ),
           ],
         );
@@ -91,7 +93,9 @@ class _ProductDetailPageState
               ),
             ),
           ),
-          const SizedBox(height: 10),
+          const SizedBox(
+            height: 10,
+          ),
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 10),
             child: Text(
@@ -99,14 +103,14 @@ class _ProductDetailPageState
               style: context.textStyles.textExtraBold.copyWith(fontSize: 22),
             ),
           ),
-          const SizedBox(height: 10),
+          const SizedBox(
+            height: 10,
+          ),
           Expanded(
             child: Padding(
               padding: const EdgeInsets.symmetric(horizontal: 10),
               child: SingleChildScrollView(
-                child: Text(
-                  widget.product.description ?? '',
-                ),
+                child: Text(widget.product.description ?? ''),
               ),
             ),
           ),
@@ -114,22 +118,23 @@ class _ProductDetailPageState
           Row(
             children: [
               Container(
-                  height: 68,
-                  padding: const EdgeInsets.all(8),
-                  width: context.percentWidth(.5),
-                  child: BlocBuilder<ProductDetailController, int>(
-                    builder: (context, amount) {
-                      return DeliveryIncrementDecrementButton(
-                        amout: amount,
-                        decrementTap: () {
-                          controller.decrement();
-                        },
-                        incrementTap: () {
-                          controller.increment();
-                        },
-                      );
-                    },
-                  )),
+                width: context.percentWidth(.5),
+                height: 68,
+                padding: const EdgeInsets.all(8),
+                child: BlocBuilder<ProductDetailController, int>(
+                  builder: (context, amount) {
+                    return DeliveryIncrementDecrementButton(
+                      incrementTap: () {
+                        controller.increment();
+                      },
+                      decrementTap: () {
+                        controller.decrement();
+                      },
+                      amount: amount,
+                    );
+                  },
+                ),
+              ),
               Container(
                 width: context.percentWidth(.5),
                 height: 68,
@@ -137,9 +142,10 @@ class _ProductDetailPageState
                 child: BlocBuilder<ProductDetailController, int>(
                   builder: (context, amount) {
                     return ElevatedButton(
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: amount == 0 ? Colors.red : null,
-                      ),
+                      style: amount == 0
+                          ? ElevatedButton.styleFrom(
+                              backgroundColor: Colors.red)
+                          : null,
                       onPressed: () {
                         if (amount == 0) {
                           _showConfirmDelete(amount);
@@ -155,11 +161,11 @@ class _ProductDetailPageState
                       child: Visibility(
                         visible: amount > 0,
                         replacement: Text(
-                          'Excluir produto',
+                          'Excluir Produto',
                           style: context.textStyles.textExtraBold,
                         ),
                         child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
                             Text(
                               'Adicionar',
@@ -172,12 +178,11 @@ class _ProductDetailPageState
                             Expanded(
                               child: AutoSizeText(
                                 (widget.product.price! * amount).currencyPTBR,
-                                style: context.textStyles.textExtraBold
-                                    .copyWith(fontSize: 13),
-                                textAlign: TextAlign.center,
                                 maxFontSize: 13,
                                 minFontSize: 5,
                                 maxLines: 1,
+                                textAlign: TextAlign.center,
+                                style: context.textStyles.textExtraBold,
                               ),
                             ),
                           ],

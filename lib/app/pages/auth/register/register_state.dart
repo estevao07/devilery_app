@@ -10,21 +10,30 @@ enum RegisterStatus {
 
 class RegisterState extends Equatable {
   final RegisterStatus status;
+  final String? errorMessage;
 
   const RegisterState({
     required this.status,
+    this.errorMessage,
   });
 
-  const RegisterState.initial() : status = RegisterStatus.initial;
+  const RegisterState.initial()
+      : status = RegisterStatus.initial,
+        errorMessage = null;
 
   @override
-  List<Object> get props => [];
+  List<Object?> get props => [
+        status,
+        errorMessage,
+      ];
 
   RegisterState copyWith({
     RegisterStatus? status,
+    String? errorMessage,
   }) {
     return RegisterState(
       status: status ?? this.status,
+      errorMessage: errorMessage ?? this.errorMessage,
     );
   }
 }

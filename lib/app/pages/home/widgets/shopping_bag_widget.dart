@@ -1,27 +1,37 @@
 import 'package:flutter/material.dart';
 
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'package:delivery_app/app/core/extensions/formatter_extensions.dart';
 import 'package:delivery_app/app/core/ui/helpers/size_extensions.dart';
 import 'package:delivery_app/app/core/ui/styles/text_styles.dart';
 import 'package:delivery_app/app/dto/order_product_dto.dart';
+import 'package:delivery_app/app/pages/home/home_controller.dart';
 
 class ShoppingBagWidget extends StatelessWidget {
   final List<OrderProductDto> bag;
 
-  const ShoppingBagWidget({Key? key, required this.bag}) : super(key: key);
+  const ShoppingBagWidget({
+    super.key,
+    required this.bag,
+  });
 
   Future<void> _goOrder(BuildContext context) async {
     final navigator = Navigator.of(context);
+    final controller = context.read<HomeController>();
     final sp = await SharedPreferences.getInstance();
-
+    // sp.clear();
     if (!sp.containsKey('accessToken')) {
-      //Envio para o login
       final loginResult = await navigator.pushNamed('/auth/login');
+
+      if (loginResult == null || loginResult == false) {
+        return;
+      }
     }
 
-    //Envio para o order
+    final updateBag = await navigator.pushNamed('/order', arguments: bag);
+    controller.updateBag(updateBag as List<OrderProductDto>);
   }
 
   @override
@@ -32,8 +42,8 @@ class ShoppingBagWidget extends StatelessWidget {
 
     return Container(
       width: context.screenWidth,
-      padding: const EdgeInsets.all(20),
       height: 90,
+      padding: const EdgeInsets.all(20),
       decoration: const BoxDecoration(
         color: Colors.white,
         boxShadow: [
@@ -60,7 +70,7 @@ class ShoppingBagWidget extends StatelessWidget {
             Align(
               alignment: Alignment.center,
               child: Text(
-                'Ver sacola',
+                'Ver Sacola',
                 style: context.textStyles.textExtraBold.copyWith(fontSize: 14),
               ),
             ),
@@ -70,7 +80,7 @@ class ShoppingBagWidget extends StatelessWidget {
                 totalBag,
                 style: context.textStyles.textExtraBold.copyWith(fontSize: 11),
               ),
-            ),
+            )
           ],
         ),
       ),
